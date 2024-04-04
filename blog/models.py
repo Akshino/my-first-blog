@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 from django.conf import settings
 from django.db import models
@@ -39,3 +39,12 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
+    
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', default='profile_pictures/default.png')
+
+    def __str__(self):
+        return self.user.username

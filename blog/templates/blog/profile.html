@@ -1,0 +1,12 @@
+<!-- profile.html -->
+
+{% extends 'blog/base.html' %}
+{% block content %}
+  <h2>User Profile</h2>
+  <img src="{{ request.user.userprofile.profile_picture.url }}" alt="Profile Picture">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ profile_form.as_p }}
+    <button type="submit">Update Profile Picture</button>
+  </form>
+{% endblock %}

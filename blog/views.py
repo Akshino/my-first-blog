@@ -84,3 +84,45 @@ def comment_remove(request, pk):
     comment.delete()
     return redirect('post_detail', pk=comment.post.pk)
 
+from .forms import UserRegistrationForm,ProfilePictureForm
+
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+        profile_form = ProfilePictureForm(request.POST, request.FILES)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
+            return redirect('login')
+    else:
+        user_form = UserRegistrationForm()
+        profile_form = ProfilePictureForm()
+    return render(request, 'registration/register.html', {'user_form': user_form, 'profile_form': profile_form})
+
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login
+
+def user_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, request.POST)
+        if form.is_valid():
+            # Log the user in
+            login(request, form.get_user())
+            return redirect('post_list')  # Redirect to a specific page after login
+    else:
+        form = AuthenticationForm()
+    return render(request, 'registration/user_login.html', {'form': form})
+
+
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        profile_form = ProfilePictureForm(request.POST, request.FILES, instance=request.user.userprofile)
+        if profile_form.is_valid():
+            profile_form.save()
+            return redirect('profile')
+    else:
+        profile_form = ProfilePictureForm(instance=request.user.userprofile)
+    return render(request, 'blog/profile.html', {'profile_form': profile_form})

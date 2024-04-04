@@ -23,3 +23,10 @@ urlpatterns = [
     path('accounts/logout/', views.LogoutView.as_view(next_page='/'), name='logout'),
     path('', include('blog.urls')),
 ]
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
